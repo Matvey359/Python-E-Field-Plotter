@@ -18,6 +18,7 @@ class MainWindow(QMainWindow):
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 
+## ==> WINDOW MOVE
 		def moveWindow(event):
 
 			if event.buttons() == Qt.LeftButton:
@@ -27,32 +28,41 @@ class MainWindow(QMainWindow):
 
 		self.ui.frame_9.mouseMoveEvent = moveWindow
 
+## ==> SETTING UP SPIN BOXES
 		self.ui.Charge1_2.setSuffix(" px")
-		self.ui.Charge1_2.setValue(25)
+		#self.ui.Charge1_2.setValue(25)
 		self.ui.Charge1_2.valueChanged.connect(self.variables)
 		self.ui.Charge1_3.setSuffix(" px")
-		self.ui.Charge1_3.setValue(25)
+		#self.ui.Charge1_3.setValue(25)
 		self.ui.Charge1_3.valueChanged.connect(self.variables)
 		self.ui.Charge1_6.setSuffix(" px")
-		self.ui.Charge1_6.setValue(52)
+		#self.ui.Charge1_6.setValue(52)
 		self.ui.Charge1_6.valueChanged.connect(self.variables)
 		self.ui.Charge1_7.setSuffix(" px")
-		self.ui.Charge1_7.setValue(52)
+		#self.ui.Charge1_7.setValue(52)
 		self.ui.Charge1_7.valueChanged.connect(self.variables)
 
 		self.ui.Charge1.setSuffix(" q")
-		self.ui.Charge1.setValue(1000)
+		#self.ui.Charge1.setValue(1000)
 		self.ui.Charge1.valueChanged.connect(self.variables)
 		self.ui.Charge2.setSuffix(" q")
-		self.ui.Charge2.setValue(-1000)
+		#self.ui.Charge2.setValue(-1000)
 		self.ui.Charge2.valueChanged.connect(self.variables)
 
+## ==> SETTING UP BUTTON
 		self.ui.pushButton.clicked.connect(self.plot)
 
+## ==> SETTING UP TITLE BAR
 		UIFunctions.uiDefininitions(self)
 
+## ==> WINDOW SHOW
 		self.show()
 
+## ==> CONTINUATION OF WINDOW MOVE
+	def mousePressEvent(self, event):
+		self.dragPos = event.globalPos()
+
+## ==> GET VALUES FROM SPIN BOXES
 	def variables(self):
 		self.q1 = self.ui.Charge1.value()
 		self.q2 = self.ui.Charge2.value()
@@ -62,7 +72,10 @@ class MainWindow(QMainWindow):
 		self.q2CordX = self.ui.Charge1_7.value()
 		self.q2CordY = self.ui.Charge1_6.value()
 
+## ==> PLOTTING
 	def plot(self):
+
+## ==> DEBUG
 		print(self.q1)
 		print(self.q2)
 		print(self.q1CordX)
@@ -70,6 +83,7 @@ class MainWindow(QMainWindow):
 		print(self.q2CordX)
 		print(self.q2CordY)
 
+## ==> CREATING COLOR MAP
 		cdict = {'red':   [[0.0, 1.0, 1.0],
 							[0.25, 1.0, 1.0],
 							[0.5, 0.0, 0.0],
@@ -84,6 +98,8 @@ class MainWindow(QMainWindow):
 							[1.0, 1.0, 1.0]]}
 
 		newcmp = colors.LinearSegmentedColormap('testCmap', segmentdata=cdict, N=256)
+
+## ==> SETTING UP CANVAS
 		width = 100
 		height = 100
 
@@ -91,6 +107,7 @@ class MainWindow(QMainWindow):
 
 		self.data = np.random.randn(width, height)
 
+## ==> MATH AND PHYSICS MAGIC :)
 		for x in range(width):
 			for y in range(height):
 				a1 = math.fabs(x - self.q1CordX)
@@ -121,6 +138,7 @@ class MainWindow(QMainWindow):
 			#if x <= 250 or x >= 750:
 			#	data[[x], [y]] = 0
 
+## ==> SHOW RESULT
 
 		plt.imshow(self.data, cmap=newcmp, interpolation='bicubic')
 		plt.colorbar()
@@ -129,11 +147,6 @@ class MainWindow(QMainWindow):
 		plt.scatter(self.q2CordY, self.q2CordX, s=150, c='red', marker='o')
 		plt.scatter(self.q2CordY, self.q2CordX, s=75, c='white', marker='+')
 		plt.show()
-		
-
-
-	def mousePressEvent(self, event):
-		self.dragPos = event.globalPos()
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
